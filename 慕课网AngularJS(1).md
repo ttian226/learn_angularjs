@@ -165,3 +165,54 @@ myModule.controller('ListCtrl', ['$scope', function($scope) {
 }]);
 ```
 
+#### 事件传播
+
+* 点击$emit按钮事件向上传播
+* 点击$broadcast按钮事件向下传播
+
+```html
+<!doctype html>
+<html ng-app="MyModule">
+<head>
+    <meta charset="utf-8">
+</head>
+<body>
+<div ng-controller="EventController">
+    Root scope
+    <tt>MyEvent</tt> count: {{count}}
+    <ul>
+        <li ng-repeat="i in [1]" ng-controller="EventController">
+            <button ng-click="$emit('MyEvent')">
+                $emit
+            </button>
+            <button ng-click="$broadcast('MyEvent')">
+                $broadcast
+            </button>
+            <br>
+            Middle scope
+            <tt>MyEvent</tt> count: {{count}}
+            <ul>
+                <li ng-repeat="item in [1, 2]" ng-controller="EventController">
+                    Leaf scope
+                    <tt>MyEvent</tt> count: {{count}}
+                </li>
+            </ul>
+        </li>
+    </ul>
+</div>
+</body>
+<script src="angular.min.js"></script>
+<script src="controller.js"></script>
+</html>
+```
+
+```javascript
+var myModule = angular.module('MyModule', []);
+
+myModule.controller('EventController', ['$scope', function($scope) {
+    $scope.count = 0;
+    $scope.$on('MyEvent', function() {
+        $scope.count++;
+    });
+}]);
+```
