@@ -165,10 +165,60 @@ myModule.controller('ListCtrl', ['$scope', function($scope) {
 }]);
 ```
 
-#### 事件传播
+#### $scope的事件机制
+
+例子1
+
+```html
+<!doctype html>
+<html ng-app="MyModule">
+<head>
+    <meta charset="utf-8">
+</head>
+<body>
+<div>
+    <div ng-controller="Controller1">
+        <p>{{greeting.text}},Angular</p>
+        <button ng-click="test1()">test1</button>
+    </div>
+    <div ng-controller="Controller2">
+        <p>{{greeting.text}},Angular</p>
+        <button ng-click="test2()">test2</button>
+    </div>
+</div>
+</body>
+<script src="angular.min.js"></script>
+<script src="controller.js"></script>
+</html>
+```
+
+```javascript
+var myModule = angular.module('MyModule', []);
+
+myModule.controller('Controller1', ['$scope', function($scope) {
+    $scope.greeting = {
+        text: 'hello1'
+    };
+    $scope.test1 = function() {
+        alert('test1');
+    };
+}]);
+
+myModule.controller('Controller2', ['$scope', function($scope) {
+    $scope.greeting = {
+        text: 'hello2'
+    };
+    $scope.test2 = function() {
+        alert('test2');
+    };
+}]);
+```
+
+例子2
 
 * 点击$emit按钮事件向上传播
 * 点击$broadcast按钮事件向下传播
+* `ng-repeat="i in [1]"`为内联表达式，AngularJS支持这种内联写法
 
 ```html
 <!doctype html>
@@ -216,3 +266,18 @@ myModule.controller('EventController', ['$scope', function($scope) {
     });
 }]);
 ```
+
+#### $scope
+
+1. $scope是一个js对象
+2. $scope提供了一些工具方法$watch(),$apply()，一般不会手动调用这些方法，它会在内部监控这些对象值的变化
+3. $scope是表达式的执行环境（或者叫作用域）
+4. $scope是一个树形结构，与DOM标签平行。
+5. 子$scope对象会继承父$scope上的属性和方法。
+6. 每个Angular应用只有一个根$scope对象（一般位于ng-app上）
+7. $scope可以传播事件，类似DOM事件，可以向上也可以向下
+8. $scope是AngularJS的基础，不仅仅是MVC的基础也是实现双向数据绑定的基础
+9. 可以用`angluar.element($0).scope()`进行调试
+
+$scope的生命周期：
+创建->注册监控->检测模型的变化->观察模型有没有脏->销毁
