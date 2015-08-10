@@ -23,7 +23,13 @@ myModule.controller('helloAngular', ['$scope', function($scope) {
 
 * framework存放angularjs以及第三方库如bootstrap等。
 * tpls目录存放模板文件（html片段）
-* js目录存放js文件
+* js目录存放js文件，app.js作为启动点的js
+* index.html应用的主html文件(包含`<div ng-view></div>`,根容器)
+
+#### 路由
+
+本质上来说路由就是根据地址栏里的url的不同，去展现不同的视图。这个视图是由控制器去负责生成的。不同的视图有不同的控制器去处理
+
 
 #### 双向数据绑定
 
