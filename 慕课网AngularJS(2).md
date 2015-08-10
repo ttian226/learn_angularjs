@@ -1,8 +1,8 @@
 #### 模块定义
 
 AngularJS实现模块化步骤：
-* 用angular这个全局对象的module方法去定义一个模块
-* 在这个module的实例上去调用controller方法来创建helloAngular的控制器
+* 用`angular`这个全局对象的`module`方法去定义一个模块
+* 在这个`module`的实例上去调用`controller`方法来创建`helloAngular`的控制器
 * 根据官方的定义，AngularJS中的模块是一个集合，是由模型，视图，控制器，过滤器，服务等组合到一起，实现某一个功能。
 
 ```javascript
@@ -20,6 +20,10 @@ myModule.controller('helloAngular', ['$scope', function($scope) {
 #### 目录结构
 
 ![Image](https://github.com/ttian226/learn_angularjs/blob/master/imgs/ng-file-list.png)
+
+* framework存放angularjs以及第三方库如bootstrap等。
+* tpls目录存放模板文件（html片段）
+* js目录存放js文件
 
 #### 双向数据绑定
 
