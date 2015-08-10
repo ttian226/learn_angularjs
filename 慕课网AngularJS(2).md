@@ -38,6 +38,20 @@ myModule.controller('helloAngular', ['$scope', function($scope) {
 * 控制器，指令，服务，路由，过滤器分别放在一个模块里（可借助grunt合并）
 * 用一个总的app模块作为入口点，它依赖其它所有模块
 
+```html
+<html ng-app="bookStoreApp">
+```
+
+```javascript
+var bookStoreApp = angular.module('bookStoreApp', [
+    'ngRoute', 'ngAnimate', 'bookStoreCtrls', 'bookStoreFilters',
+    'bookStoreServices', 'bookStoreDirectives'
+]);
+```
+关于模块的加载说明：
+
+`bookStoreApp`是作为一个启动点的，angularjs在加载完成后会找`ng-app`这个指令（`ng-app`在一个应用只能有一个），找到了之后就会尝试执行这个启动点模块，然后发现启动点模块`bookStoreApp`还依赖其它模块。然后会等待这些模块加载完成。实际上和js文件的加载顺序没有太大关系。
+
 #### 双向数据绑定
 
 ##### 使用ng-bind指令
