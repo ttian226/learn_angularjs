@@ -19,6 +19,7 @@ myModule.controller('helloAngular', ['$scope', function($scope) {
 
 #### 目录结构
 
+![Image](https://github.com/ttian226/learn_angularjs/blob/master/imgs/ng-file-list.png)
 
 #### 双向数据绑定
 
