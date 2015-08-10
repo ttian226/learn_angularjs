@@ -30,6 +30,13 @@ myModule.controller('helloAngular', ['$scope', function($scope) {
 
 本质上来说路由就是根据地址栏里的url的不同，去展现不同的视图。这个视图是由控制器去负责生成的。不同的视图有不同的控制器去处理
 
+#### ng官方推荐的模块切分方式
+
+![Image](https://github.com/ttian226/learn_angularjs/blob/master/imgs/ng-modules.png)
+
+* 任何一个ng应用都是由控制器，指令，服务，路由，过滤器等有限的模块类型构成的
+* 控制器，指令，服务，路由，过滤器分别放在一个模块里（可借助grunt合并）
+* 用一个总的app模块作为入口点，它依赖其它所有模块
 
 #### 双向数据绑定
 
