@@ -160,7 +160,6 @@ URL | HTTP Verb | Request Body | Result
   'delete': {method:'DELETE'} };
 ```
 
-为了在你的controller或者service中使用 $resource, 你需要声明一个对$resource的依赖
 
 ```javascript
 phonecatServices.factory('Phone', ['$resource', function($resource) {
@@ -171,5 +170,28 @@ phonecatServices.factory('Phone', ['$resource', function($resource) {
             isArray: true
         }
     });
+}]);
+```
+这里第3个参数中的query对象覆盖了默认的query方法，等价下面
+
+```javascript
+phonecatServices.factory('Phone', ['$resource', function($resource) {
+    return $resource('phones/phones.json');
+}]);
+```
+
+或者：
+
+```javascript
+phonecatServices.factory('Phone', ['$resource', function($resource) {
+    return $resource('phones/:phoneId.json');
+}]);
+```
+
+```javascript
+phoneModule.controller('PhoneListCtrl', ['$scope', 'Phone', function($scope, Phone){
+    // 给query传入参数
+    $scope.phones = Phone.query({phoneId: 'phones'});
+    $scope.orderProp = 'age';
 }]);
 ```
