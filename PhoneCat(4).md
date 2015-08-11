@@ -71,3 +71,63 @@ phone-detail.html中，把大图的`ngSrc`指令绑定到`mainImageUrl`属性上
     </li>
 </ul>
 ```
+
+#### REST和定制服务
+
+定制的服务被定义在services.js中，同时要引入angularjs-resource.js。它包含了`ngResource`模块以及其中的`$resource`服务。
+我们使用模块API通过一个工厂方法注册了一个定制服务。我们传入服务的名字`Phone`和工厂函数。工厂函数和控制器构造函数差不多，它们都通过函数参数声明依赖服务。`Phone`服务声明了它依赖于`$resource`服务。
+
+`$resource`服务使得用短短的几行代码就可以创建一个RESTful客户端。我们的应用使用这个客户端来代替底层的`$http`服务。
+
+```javascript
+// 定义模块phonecatServices
+var phonecatServices = angular.module('phonecatServices', ['ngResource']);
+
+// 使用模块的实例调用工厂方法注册一个定制服务Phone，同时注入$resource服务。
+phonecatServices.factory('Phone', ['$resource', function($resource) {
+    return $resource('phones/:phoneId.json', {}, {
+        query: {
+            method: 'GET',
+            params: {phoneId: 'phones'},
+            isArray: true
+        }
+    });
+}]);
+```
+
+app.js中把`phonecatServices`添加到`phonecatApp`的依赖数组里
+
+```javascript
+var mainModule = angular.module('phonecatApp', [
+    'ngRoute',
+    'phonecatController',
+    'phonecatFilters',
+    'phonecatServices'
+]);
+```
+
+控制器controller.js，通过重构掉底层的`$http`服务，把它放在一个新的服务`Phone`中，我们可以大大简化子控制器（`PhoneListCtrl`和`PhoneDetailCtrl`）。AngularJS的`$resource`相比于`$http`更加适合于与RESTful数据源交互。
+
+当调用`Phone`服务的方法是我们并没有传递任何回调函数。尽管这看起来结果是同步返回的，其实根本就不是。被同步返回的是一个future对象（是一个空对象），当XHR相应返回的时候会把数据填入这个空对象。鉴于AngularJS的数据绑定，我们可以使用future并且把它绑定到我们的模板上。然后，当数据到达时，我们的视图会自动更新。
+
+```javascript
+var phoneModule = angular.module('phonecatController', []);
+
+// 在控制器中没有注入$http服务，注入了新定义的Phone服务
+phoneModule.controller('PhoneListCtrl', ['$scope', 'Phone', function($scope, Phone){
+    // 通过Phone.query()获取所有的手机
+    $scope.phones = Phone.query();
+    $scope.orderProp = 'age';
+}]);
+
+phoneModule.controller('PhoneDetailCtrl', ['$scope', '$routeParams', 'Phone', function($scope, $routeParams, Phone) {
+    $scope.phone = Phone.get({phoneId: $routeParams.phoneId}, function(phone) {
+        $scope.mainImageUrl = phone.images[0];
+    });
+
+    $scope.setImage = function(imageUrl) {
+        $scope.mainImageUrl = imageUrl;
+    };
+}]);
+```
+
