@@ -20,7 +20,7 @@ var filterModule = angular.module('phonecatFilters', []);
 filterModule.filter('checkmark', function() {
     // 匿名函数返回一个函数，参数为html中对应的数据模型
     return function(input) {
-        // 当input为ture时返回'\u2713'（一个对号），为false时返回'\u2718'（）
+        // 当input为ture时返回'\u2713'（√），为false时返回'\u2718'（×）
         return input ? '\u2713' : '\u2718';
     };
 });
