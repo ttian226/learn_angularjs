@@ -110,6 +110,8 @@ var mainModule = angular.module('phonecatApp', [
 
 当调用`Phone`服务的方法是我们并没有传递任何回调函数。尽管这看起来结果是同步返回的，其实根本就不是。被同步返回的是一个future对象（是一个空对象），当XHR相应返回的时候会把数据填入这个空对象。鉴于AngularJS的数据绑定，我们可以使用future并且把它绑定到我们的模板上。然后，当数据到达时，我们的视图会自动更新。
 
+有的时候，单单依赖future对象和数据绑定不足以满足我们的需求，所以在这些情况下，我们需要添加一个回调函数来处理服务器的响应。`PhoneDetailCtrl`控制器通过在一个回调函数中设置`mainImageUrl`就是一个解释
+
 ```javascript
 var phoneModule = angular.module('phonecatController', []);
 
