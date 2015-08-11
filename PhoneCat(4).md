@@ -133,3 +133,43 @@ phoneModule.controller('PhoneDetailCtrl', ['$scope', '$routeParams', 'Phone', fu
 }]);
 ```
 
+`$resource`是怎么工作的?
+`$resource`和RESTful API工作. 这意味着你的的URLS应该类似于下面的模式:
+
+URL | HTTP Verb | Request Body | Result
+----|-----------|--------------|-------
+`/api/entries`|GET|empty|Returns all entries
+`/api/entries`|POST|JSON String|Creates new entry
+`/api/entries/:id`|GET|empty|Returns single entry
+`/api/entries/:id`|PUT|JSON String|Updates existing entry
+`/api/entries/:id`|DELETE|empty|Deletes existing entry
+
+
+`$resource`默认有5个方法:
+* `get()`
+* `query()`
+* `save()`
+* `remove()`
+* `delete()`
+
+```json
+{ 'get':    {method:'GET'},
+  'save':   {method:'POST'},
+  'query':  {method:'GET', isArray:true},
+  'remove': {method:'DELETE'},
+  'delete': {method:'DELETE'} };
+```
+
+为了在你的controller或者service中使用 $resource, 你需要声明一个对$resource的依赖
+
+```javascript
+phonecatServices.factory('Phone', ['$resource', function($resource) {
+    return $resource('phones/:phoneId.json', {}, {
+        query: {
+            method: 'GET',
+            params: {phoneId: 'phones'},
+            isArray: true
+        }
+    });
+}]);
+```
