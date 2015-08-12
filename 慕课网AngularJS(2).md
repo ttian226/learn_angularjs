@@ -52,9 +52,8 @@ var bookStoreApp = angular.module('bookStoreApp', [
 
 `bookStoreApp`是作为一个启动点的，angularjs在加载完成后会找`ng-app`这个指令（`ng-app`在一个应用只能有一个），找到了之后就会尝试执行这个启动点模块，然后发现启动点模块`bookStoreApp`还依赖其它模块。然后会等待这些模块加载完成。实际上和js文件的加载顺序没有太大关系。
 
-#### 双向数据绑定
 
-##### 使用ng-bind指令
+#### 使用ng-bind指令
 
 之前的例子，使用`{{}}`取值表达式时，当页面刷新快的时候页面上会显示出`{greeting.text}}`这样的文字。
 
@@ -72,3 +71,110 @@ var bookStoreApp = angular.module('bookStoreApp', [
 </div>
 ```
 
+什么时候使用`ng-bind`什么时候使用`{{}}`
+在index.html中通常是第一个页面，使用`ng-bind`。后续的页面使用`{{}}`进行绑定。
+
+
+#### 双向数据绑定
+
+index.html:
+
+```html
+<!DOCTYPE html>
+<html lang="en" ng-app="UserInfoModule">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="bootstrap/css/bootstrap.css"/>
+</head>
+<body>
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <div class="panel-title">双向数据绑定</div>
+    </div>
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-md-12">
+                <form class="form-horizontal" role="form" ng-controller="UserInfoCtrl">
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">
+                            邮箱：
+                        </label>
+                        <div class="col-md-10">
+                            <input type="email" class="form-control" placeholder="推荐使用163邮箱" ng-model="userInfo.email"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">
+                            密码：
+                        </label>
+                        <div class="col-md-10">
+                            <input type="password" class="form-control" placeholder="只能是数字，字母，下划线" ng-model="userInfo.password"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-offset-2 col-md-10">
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" ng-model="userInfo.autoLogin"/>自动登录
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-offset-2 col-md-10">
+                            <button class="btn btn-default" ng-click="getFormData()">获取Form表单的值</button>
+                            <button class="btn btn-default" ng-click="setFormData()">设置Form表单的值</button>
+                            <button class="btn btn-default" ng-click="resetForm()">重置Form表单</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script src="angular.min.js"></script>
+<script src="form.js"></script>
+</html>
+```
+
+form.js:
+
+```javascript
+var UserInfoModule = angular.module('UserInfoModule', []);
+
+UserInfoModule.controller('UserInfoCtrl', ['$scope', function($scope) {
+    // 初始化模板数据，从数据模型到模板方向上的绑定
+    $scope.userInfo = {
+        email: 'wangxu825@163.com',
+        password: '123456',
+        autoLogin: true
+    };
+
+    $scope.getFormData = function() {
+        console.log($scope.userInfo);
+    };
+
+    // 给按钮绑定的方法，修改数据模型的值
+    $scope.setFormData = function() {
+        $scope.userInfo = {
+            email: '120050856@qq.com',
+            password: 'qweasd',
+            autoLogin: false
+        };
+    };
+
+    // 重置数据模型的值
+    $scope.resetForm = function() {
+        $scope.userInfo = {
+            email: 'wangxu825@163.com',
+            password: '123456',
+            autoLogin: true
+        };
+    };
+}]);
+```
+
+* `UserInfoCtrl`中初始化`$scope.userInfo`，使模板上显示对应的数据。是从数据模型到模板方向上的绑定。
+* `getFormData`方法用来显示数据模型的值。修改页面上的数据，点击按钮，可以查看对应的数据模型的值也发生了改变。是从模板到数据模型方向上的绑定。
+* `setFormData`可以修改数据模型的值。数据模型被修改后，会在模板上同步显示出来。
