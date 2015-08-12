@@ -92,4 +92,32 @@ module.controller('HeaderController', ['$scope', function($scope) {
 }]);
 ```
 
+#### ngShow和ngHide
+
+`ngShow`和`ngHide`指令是用来控制元素的显示和隐藏
+
+```html
+<div ng-controller="DeathrayMenuController">
+    <button ng-click="toggleMenu()">Toggle Menu</button>
+    <ul ng-show="menuState.show">
+        <li>Stun</li>
+        <li>Disintegrate</li>
+        <li>Erase from history</li>
+    </ul>
+</div>
+```
+
+```javascript
+var module = angular.module('MyCSSModule', []);
+
+module.controller('DeathrayMenuController', ['$scope', function($scope) {
+    // false默认为隐藏
+    $scope.menuState = {show: false};
+
+    // 每次点击按钮后会切换状态
+    $scope.toggleMenu = function() {
+        $scope.menuState.show = !$scope.menuState.show;
+    };
+}]);
+```
 
