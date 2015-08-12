@@ -49,3 +49,47 @@ module.controller('CSSCtrl', ['$scope', function($scope) {
 }]);
 ```
 
+#### ngClass
+
+使用`ngClass`指令动态改变样式。`ng-class`接收一个表达式`{error: isError, warning: isWarning}`。当`isError`为true时`class='error'`。当`isWarning`为true时`class='warning'`
+
+```css
+.error {
+    background-color: red;
+}
+.warning {
+    background-color: yellow;
+}
+```
+
+```html
+<div ng-controller="HeaderController">
+    <div ng-class="{error: isError, warning: isWarning}">{{messageText}}</div>
+    <button ng-click="showError()">Simulate Error</button>
+    <button ng-click="showWarning()">Simulate Warning</button>
+</div>
+```
+
+```javascript
+var module = angular.module('MyCSSModule', []);
+
+module.controller('HeaderController', ['$scope', function($scope) {
+    // 默认两个样式都不显示
+    $scope.isError = false;
+    $scope.isWarning = false;
+
+    // 当点击按钮时，动态改变文本和样式
+    $scope.showError = function() {
+        $scope.messageText = 'This is an error!';
+        $scope.isError = true;
+        $scope.isWarning = false;
+    };
+    $scope.showWarning = function() {
+        $scope.messageText = 'Just a warning. Please carry on.';
+        $scope.isWarning = true;
+        $scope.isError = false;
+    };
+}]);
+```
+
+
