@@ -59,11 +59,11 @@ AngularJS通过使用自己的事件处理循环，改变了传统的Javascript�
 </html>
 ```
 
-* 在编译阶段：
+在编译阶段：
 1. `<input>`上的`ng-model`指令给`<input>`输入框绑定了`keydown`事件；
 2. `{{name}}`这个变量替换表单式建立了一个`$watch`来接受`name`变量改变的通知。
 
-* 在执行期阶段：
+在执行期阶段：
 1. 按下任何一个键(以X键为例)，都会触发一个`<input>`输入框的`keydown`事件；
 2. `<input>`上的指令捕捉到`<input>`里值得改变，然后调用`$apply("name = 'X'")`来更新处于AngularJS执行上下文中的模型；
 3. AngularJS将`name='X'`应用到模型上；
