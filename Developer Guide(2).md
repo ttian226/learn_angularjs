@@ -60,14 +60,14 @@ AngularJS通过使用自己的事件处理循环，改变了传统的Javascript�
 ```
 
 * 在编译阶段：
- 1. `<input>`上的`ng-model`指令给`<input>`输入框绑定了`keydown`事件；
- 2. `{{name}}`这个变量替换表单式建立了一个`$watch`来接受`name`变量改变的通知。
+1. `<input>`上的`ng-model`指令给`<input>`输入框绑定了`keydown`事件；
+2. `{{name}}`这个变量替换表单式建立了一个`$watch`来接受`name`变量改变的通知。
 
 * 在执行期阶段：
- 1. 按下任何一个键(以X键为例)，都会触发一个`<input>`输入框的`keydown`事件；
- 2. `<input>`上的指令捕捉到`<input>`里值得改变，然后调用`$apply("name = 'X'")`来更新处于AngularJS执行上下文中的模型；
- 3. AngularJS将`name='X'`应用到模型上；
- 4. `$digest`循环开始；
- 5. `$watch`列表检测到了`name`值的变化，然后通知`{{name}}`变量替换的表达式，这个表达式负责将DOM进行更新；
- 6. AngularJS退出执行上下文，然后退出Javascript上下文中的`keydown`事件；
- 7. 浏览器以更新的文本重渲染视图。
+1. 按下任何一个键(以X键为例)，都会触发一个`<input>`输入框的`keydown`事件；
+2. `<input>`上的指令捕捉到`<input>`里值得改变，然后调用`$apply("name = 'X'")`来更新处于AngularJS执行上下文中的模型；
+3. AngularJS将`name='X'`应用到模型上；
+4. `$digest`循环开始；
+5. `$watch`列表检测到了`name`值的变化，然后通知`{{name}}`变量替换的表达式，这个表达式负责将DOM进行更新；
+6. AngularJS退出执行上下文，然后退出Javascript上下文中的`keydown`事件；
+7. 浏览器以更新的文本重渲染视图。
