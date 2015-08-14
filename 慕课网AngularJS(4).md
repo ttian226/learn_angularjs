@@ -87,6 +87,8 @@ index.css
 
 当hello.html页面加载执行动画，自动添加类`ng-animate`,`ng-enter`,`ng-enter-active`
 ![Image](https://github.com/ttian226/learn_angularjs/blob/master/imgs/QQ20150814-1@2x.png)
+
+
 样式：
 ![Image](https://github.com/ttian226/learn_angularjs/blob/master/imgs/QQ20150814-2@2x.png)
 
