@@ -131,3 +131,17 @@ AngularJS默认是使用A(属性)匹配。A(属性)和E(元素)两种模式是�
 * 当需要创建带有自己的模板的指令时，使用元素名称的方式创建指令。
 * 当需要为已有的HTML标签增加功能时，使用属性的方式创建指令。
 
+配置项`template`为最终要显示出来的html标签。显然使用模板的方式编写出的html会比较少，如果需要编写大量的html时，写在`template`会很不方便而且不利于维护。这时需要写在`templateUrl`这个配置项里。
+
+例如：把模板切成一个独立的html来编写，即不需要在js里进行拼写，并且运行效率也不高。而是直接写在html中，如hello.html
+
+```javascript
+myModule.directive('hello', function() {
+    return {
+        restrict: 'E',
+        templateUrl: 'hello.html',
+        replace: true
+    };
+});
+```
+
