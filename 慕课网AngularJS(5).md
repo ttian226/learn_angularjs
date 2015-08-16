@@ -30,4 +30,104 @@ bookStoreApp.config(function($routeProvider) {
 * 路由的核心是给应用定义**状态**
 。和传统的开发方式会有些思路上的不同。要预先把状态定义好，要通过哪个地址进入哪种状态，会影响整个页面的编码的方式
 
+#### 指令
+
+```html
+<!doctype html>
+<html ng-app="MyModule">
+<head>
+    <meta charset="utf-8">
+</head>
+<body>
+<hello></hello>
+</body>
+<script src="angular.min.js"></script>
+<script src="controller.js"></script>
+</html>
+```
+
+```javascript
+var myModule = angular.module('MyModule', []);
+
+myModule.directive('hello', function() {
+    return {
+        restrict: 'E',
+        template: '<div>Hi everyone!</div>',
+        replace: true
+    };
+});
+```
+
+* `restrict`为匹配模式，一共有4个选项分别为A（属性）,E（元素）,M（注释）,C（样式类）
+
+*作为属性匹配*
+
+```html
+<div hello></div>
+```
+
+```javascript
+myModule.directive('hello', function() {
+    return {
+        restrict: 'A',
+        template: '<div>Hi everyone!</div>',
+        replace: true
+    };
+});
+```
+
+*作为元素匹配*
+
+```html
+<div></div>
+```
+
+```javascript
+myModule.directive('hello', function() {
+    return {
+        restrict: 'E',
+        template: '<div>Hi everyone!</div>',
+        replace: true
+    };
+});
+```
+
+*作为样式类匹配*
+
+```html
+<div class='hello'></div>
+```
+
+```javascript
+myModule.directive('hello', function() {
+    return {
+        restrict: 'C',
+        template: '<div>Hi everyone!</div>',
+        replace: true
+    };
+});
+```
+
+*作为注释匹配*
+
+```html
+<!-- directive:hello -->
+```
+
+```javascript
+myModule.directive('hello', function() {
+    return {
+        restrict: 'M',
+        template: '<div>Hi everyone!</div>',
+        replace: true
+    };
+});
+```
+
+以上四种匹配在页面上都显示'Hi everyone!'
+
+AngularJS默认是使用A(属性)匹配。A(属性)和E(元素)两种模式是最常用的。
+* 推荐使用元素和属性的方式使用指令。
+* 当需要创建带有自己的模板的指令时，使用元素名称的方式创建指令。
+* 当需要为已有的HTML标签增加功能时，使用属性的方式创建指令。
 
