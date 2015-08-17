@@ -58,6 +58,8 @@ myModule.directive('hello', function() {
 });
 ```
 
+##### restrict
+
 * `restrict`为匹配模式，一共有4个选项分别为A（属性）,E（元素）,M（注释）,C（样式类）
 
 *作为属性匹配*
@@ -131,6 +133,8 @@ AngularJS默认是使用A(属性)匹配。A(属性)和E(元素)两种模式是�
 * 当需要创建带有自己的模板的指令时，使用元素名称的方式创建指令。
 * 当需要为已有的HTML标签增加功能时，使用属性的方式创建指令。
 
+##### templateUrl
+
 配置项`template`为最终要显示出来的html标签。显然使用模板的方式编写出的html会比较少，如果需要编写大量的html时，写在`template`会很不方便而且不利于维护。这时需要写在`templateUrl`这个配置项里。
 
 例如：把模板切成一个独立的html来编写，即不需要在js里进行拼写，并且运行效率也不高。而是直接写在html中，如hello.html
@@ -144,4 +148,35 @@ myModule.directive('hello', function() {
     };
 });
 ```
+
+##### $templateCache
+
+当我们的模板不仅仅在'hello'这个指令中使用，也想在其它指令中使用。我们希望AngularJS帮它给缓存起来。
+
+```html
+<hello></hello>
+```
+
+run方法：当注射器加载完成所有模块时，此方法执行一次。用AngularJS内置的`$templateCache`的`put`方法把模板给缓存起来。在使用模板时时，使用get方法。
+
+```javascript
+var myModule = angular.module('MyModule', []);
+
+// 当注射器加载完成时执行，此方法执行一次
+myModule.run(function($templateCache) {
+    // 缓存模板
+    $templateCache.put('hello.html', '<div>Hello everyone!!!!</div>')
+});
+
+myModule.directive('hello', function($templateCache) {
+    return {
+        restrict: 'E',
+        // 使用模板
+        template: $templateCache.get('hello.html'),
+        replace: true
+    };
+});
+```
+
+
 
