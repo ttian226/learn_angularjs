@@ -191,7 +191,7 @@ myModule.directive('hello', function($templateCache) {
 配置项中，如果使用replace这种方式，会把里面div的内容给替换掉
 
 ```javascript
-myModule.directive('hello', function($templateCache) {
+myModule.directive('hello', function() {
     return {
         restrict: 'E',
         template: '<div>hello everyone!</div>',
@@ -203,7 +203,7 @@ myModule.directive('hello', function($templateCache) {
 配置项中，使用transclude这种方式可以保存被嵌套的元素，在模板中配置`<div ng-transclude></div>`，这里会被替换成`<hello>`内部嵌套的内容。
 
 ```javascript
-myModule.directive('hello', function($templateCache) {
+myModule.directive('hello', function() {
     return {
         restrict: 'E',
         template: '<div>hello everyone!<div ng-transclude></div></div>',
@@ -221,6 +221,88 @@ myModule.directive('hello', function($templateCache) {
 
     1. 加载阶段。加载angularjs，找到ng-app指令，确定应用的边界。
     2. 编译阶段。遍历Dom，查找所有的指令，缓存到内部；根据指令代码中的template,replace,transclude转换Dom结构；如果存在compile函数则调用
-    3. 链接阶段。每条指令的link函数被调用
+    3. 链接阶段。对每一条指令运行link方法；link方法一般用来操作dom，绑定事件监视器。
 
-AngularJS在指令里操作Dom，在指令的link方法中操作Dom
+AngularJS在指令里操作Dom，在指令的link方法中操作Dom。
+
+link方法做了哪些事：给Dom元素绑定一些事件，绑定作用域，指令和数据之间的绑定就是在link中进行的
+
+
+#### 指令和控制器之间的交互
+
+```html
+<div ng-controller="MyCtrl">
+    <loader>滑动加载</loader>
+</div>
+```
+
+```javascript
+var myModule = angular.module('MyModule', []);
+
+myModule.controller('MyCtrl', ['$scope', function($scope) {
+    $scope.loadData = function() {
+        console.log('数据加载中...');
+    };
+}]);
+
+myModule.directive('loader', function() {
+    return {
+        restrict: 'E',
+        link: function(scope, element, attr) {
+            element.bind('mouseenter', function() {
+                scope.loadData();
+                // 或使用scope.$apply('loadData()')，都会达到同样的效果
+            });
+        }
+    };
+});
+```
+
+当鼠标划入loader中，会触发loadData方法。
+
+这里会有个问题，我们定义的`loader`指令不仅仅在MyCtrl中使用，也想在其它控制器中使用。
+
+修改html:模板中定义了两个controller。给`<loader>`定义一个自定义的属性`howToLoad`，通过属性把如何加载数据的方法传递过来
+
+```html
+<div ng-controller="MyCtrl1">
+    <loader howToLoad="loadData1()">滑动加载1</loader>
+</div>
+<div ng-controller="MyCtrl2">
+    <loader howToLoad="loadData2()">滑动加载2</loader>
+</div>
+```
+
+修改js:给MyCtrl1定义方法loadData1，给MyCtrl2定义方法loadData2。
+
+注： 如果在html中定义的属性是驼峰法写的如`howToLoad`，在js里调用要写成小写的`howtoload`
+
+```javascript
+var myModule = angular.module('MyModule', []);
+
+myModule.controller('MyCtrl1', ['$scope', function($scope) {
+    $scope.loadData1 = function() {
+        console.log('数据加载中...111');
+    };
+}]);
+
+myModule.controller('MyCtrl2', ['$scope', function($scope) {
+    $scope.loadData2 = function() {
+        console.log('数据加载中...222');
+    };
+}]);
+
+myModule.directive('loader', function() {
+    return {
+        restrict: 'AE',
+        link: function(scope, element, attr) {
+            element.bind('mouseenter', function() {
+                // 通过 attr.howtoload()获取不同的方法
+                scope.$apply(attr.howtoload); //通过scope.$apply来调用
+            });
+        }
+    };
+});
+```
+
+上面的例子实现了指令的复用，指令通常是可以用在不同的controller中。
