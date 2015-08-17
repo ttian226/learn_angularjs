@@ -178,5 +178,49 @@ myModule.directive('hello', function($templateCache) {
 });
 ```
 
+##### replace和transclude
+
+在`<hello>`标签中添加一个`<div>`
+
+```html
+<hello>
+    <div>这里是指令的内部内容</div>
+</hello>
+```
+
+配置项中，如果使用replace这种方式，会把里面div的内容给替换掉
+
+```javascript
+myModule.directive('hello', function($templateCache) {
+    return {
+        restrict: 'E',
+        template: '<div>hello everyone!</div>',
+        replace: true
+    };
+});
+```
+
+配置项中，使用transclude这种方式可以保存被嵌套的元素，在模板中配置`<div ng-transclude></div>`，这里会被替换成`<hello>`内部嵌套的内容。
+
+```javascript
+myModule.directive('hello', function($templateCache) {
+    return {
+        restrict: 'E',
+        template: '<div>hello everyone!<div ng-transclude></div></div>',
+        transclude: true
+    };
+});
+```
+
+*transclude*是一个非常重要的配置项。通过`transclude`可以让指令嵌套的使用。
 
 
+#### 指令执行的大概机制
+
+3个阶段：
+
+    1. 加载阶段。加载angularjs，找到ng-app指令，确定应用的边界。
+    2. 编译阶段。遍历Dom，查找所有的指令，缓存到内部；根据指令代码中的template,replace,transclude转换Dom结构；如果存在compile函数则调用
+    3. 链接阶段。每条指令的link函数被调用
+
+AngularJS在指令里操作Dom，在指令的link方法中操作Dom
