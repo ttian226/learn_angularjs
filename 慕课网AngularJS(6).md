@@ -89,3 +89,5 @@ myModule.directive('light', function() {
 ```
 
 什么时候写在controller里，什么时候写在link里？如果想让你的一些方法暴露给外部调用，就写在controller里。link是处理指令内部的一些事务的。比如给元素绑定事件，绑定数据等。
+
+关于require，比如strength指令是依赖于superman这个指令的。如果设置require后，link函数就可以指定第4个参数supermanCtrl。AngularJS在进行处理的时候，会把supermanCtrl注入到link函数中，这样就可以通过supermanCtrl调用myModule里暴露在控制器的方法了。
