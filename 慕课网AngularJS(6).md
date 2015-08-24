@@ -18,7 +18,8 @@
 </div>
 ```
 
-包含4个指令：
+这个例子创建了4个指令：
+
 1. 标签superman
 2. 属性strength
 3. 属性speed
