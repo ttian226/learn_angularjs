@@ -79,3 +79,58 @@ AngularJS通过使用自己的事件处理循环，改变了传统的Javascript�
 作用域是用来检测模型的改变和为表达式提供执行上下文的。它是分层组织起来的，并且层级关系是紧跟着DOM的结构的。(请参考单个指令的文档，有一些指令会导致新的作用域的创建。)
 
 下面这个例子演示了`{{name}}`表达式在不同的作用域下解析成不同的值。这个例子下面的图片显示作用域的边界。
+
+```html
+<div ng-controller="GreetCtrl">
+    Hello {{name}}!
+</div>
+<div ng-controller="ListCtrl">
+    <ol>
+        <li ng-repeat="name in names">{{name}}</li>
+    </ol>
+</div>
+```
+
+```javascript
+var myModule = angular.module('MyModule', []);
+
+myModule.controller('GreetCtrl', ['$scope', function($scope) {
+    $scope.name = 'world';
+}]);
+
+myModule.controller('ListCtrl', ['$scope', function($scope) {
+    $scope.names = ['Igor', 'Misko', 'Vojta'];
+}]);
+```
+
+#### 控制器
+
+视图背后的控制代码就是控制器。它的主要工作内容是构造模型，并把模型和回调方法一起发送到视图。 视图可以看做是作用域在模板(HTML)上的**投影(projection)**。而作用域是一个中间地带，它把模型整理好传递给视图，把浏览器事件传递给控制器。控制器和模型的分离非常重要，因为：
+
+    * 控制器是由Javascript写的。Javascript是命令式的，命令式的语言适合用来编写应用的行为。控制器不应该包含任何关于渲染代码（DOM引用或者片段）。
+    * 视图模板是用HTML写的。HTML是声明是的，声明式的语言适合用来编写UI。视图不应该包含任何行为。
+    * 因为控制器和视图没有直接的调用关系，所以可以使多个视图对应同一个控制器。这对**换肤(re-skinning)**、适配不同设备（比如移动设备和台式机）、测试，都非常重要。
+
+```html
+<div ng-controller="MyCtrl">
+    Hello {{name}}!
+    <button ng-click="action()">
+        OK
+    </button>
+</div>
+```
+
+```javascript
+var myModule = angular.module('MyModule', []);
+
+myModule.controller('MyCtrl', ['$scope', function($scope) {
+    $scope.name = 'world';
+    $scope.action = function() {
+        $scope.name = 'ok';
+    };
+}]);
+```
+
+#### 模型
+
+模型就是用来和模板结合生成视图的数据。模型必须在作用域中时可以被引用，这样才能被渲染生成视图。和其他框架不一样的是，Angularjs对模型本身没有任何限制和要求。你不需要继承任何类也不需要实现指定的方法以供调用或者改变模型。 模型可以是原生的对象哈希形式的，也可以是完整对象类型的。简而言之，模型可以是原生的Javascript对象。
