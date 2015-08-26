@@ -186,3 +186,49 @@ module.directive('drink', function() {
 ```
 
 这里不使用`link`属性，而是用`scope`属性配置。`scope`中的`flavor: '@'`是给当前作用域（`<div>{{flavor}}</div>`）中的`flavor`绑定一个值，这个值就是`<drink>`节点的`flavor`属性值。（要和`flavor`同名的属性值，如果`<drink>`的属性为`test`则不行）
+
+注：*@绑定传递的是一个字符串，而不是对象。即`flavor="{{ctrlFlavor}}"`，而不是`flavor="ctrlFlavor"`*
+
+
+使用`=`绑定的例子:
+
+    1. 页面里有两个输入框，一个<input>，一个通过指令生成的<input>。
+    2. <input>被绑定一个数据模型ctrlFlavor，在controller里被初始化。
+    3. 指令中模板也有一个数据模型flavor（ng-model="flavor"）。
+    4. 通过设置scope属性的flavor:'='使得指令中的数据模型被绑定到外面的数据模型ctrlFlavor上，这里是通过<drink>标签中flavor="ctrlFlavor"来实现的。
+
+注意：*这里的`<drink>`中`flavor="ctrlFlavor"`而不是`flavor="{{ctrlFlavor}}"`。前者说明它是一个数据模型对象ctrlFlavor，后者表示的是一个字符串表达式*
+
+```html
+<div ng-controller="MyCtrl">
+    Ctrl:
+    <br>
+    <input type="text" ng-model="ctrlFlavor">
+    <br>
+    Directive:
+    <br>
+    <drink flavor="ctrlFlavor"></drink>
+</div>
+```
+
+```javascript
+var myModule = angular.module("MyModule", []);
+
+myModule.controller('MyCtrl', ['$scope', function($scope){
+    $scope.ctrlFlavor="百威";
+}]);
+
+myModule.directive("drink", function() {
+    return {
+        restrict:'AE',
+        scope:{
+            flavor:'='
+        },
+        template:'<input type="text" ng-model="flavor"/>',
+        replace: true
+    }
+});
+```
+这样当修改外面数据模型`ctrlFlavor`时，指令中的数据模型`flavor`会跟随变化。当指令中的数据模型`flavor`发生变化时，外层数据模型`ctrlFlavor`会跟着变化。
+
+页面上表现是，当修改上面的输入框值，下面的输入框值会跟着变化。当修改下面的输入框值时，上面的输入框值会跟着变化。
