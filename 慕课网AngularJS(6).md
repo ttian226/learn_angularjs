@@ -137,6 +137,7 @@ scope的绑定策略：
     2. =，与父scope中的属性进行双向绑定。
     3. &，传递一个来自父scope的函数，稍后调用。
 
+例子：
 
 ```html
 <div ng-controller="MyCtrl">
@@ -168,3 +169,20 @@ module.directive('drink', function() {
 1. 控制器中给`<drink>`的属性`flavor`的数据模型`{{ctrlFlavor}}`初始化'BaiWei'
 2. 指令中给作用域（当前模板）的flavor赋值，参数attrs是`<drink>`属性集合，attrs.flavor是在控制器中绑定的字符串'BaiWei'
 3. 替换后实际上没有完全覆盖`<drink>`节点，是保留了所有的属性值，即flavor属性被保留了下来
+
+上面的例子使用@实现：
+
+```javascript
+module.directive('drink', function() {
+    return {
+        restrict: 'AE',
+        template: '<div>{{flavor}}</div>',
+        scope: {
+            flavor: '@' //作用域的数据模型flavor用<drink>节点的flavor属性值初始化
+        },
+        replace: true
+    };
+});
+```
+
+这里不使用`link`属性，而是用`scope`属性配置。`scope`中的`flavor: '@'`是给当前作用域（`<div>{{flavor}}</div>`）中的`flavor`绑定一个值，这个值就是`<drink>`节点的`flavor`属性值。（要和`flavor`同名的属性值，如果`<drink>`的属性为`test`则不行）
