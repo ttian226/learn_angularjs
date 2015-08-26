@@ -170,7 +170,7 @@ module.directive('drink', function() {
 2. 指令中给作用域（当前模板）的flavor赋值，参数attrs是`<drink>`属性集合，attrs.flavor是在控制器中绑定的字符串'BaiWei'
 3. 替换后实际上没有完全覆盖`<drink>`节点，是保留了所有的属性值，即flavor属性被保留了下来
 
-上面的例子使用@实现：
+上面的例子使用`@`实现：
 
 ```javascript
 module.directive('drink', function() {
