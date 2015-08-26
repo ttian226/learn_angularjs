@@ -134,3 +134,63 @@ myModule.controller('MyCtrl', ['$scope', function($scope) {
 #### 模型
 
 模型就是用来和模板结合生成视图的数据。模型必须在作用域中时可以被引用，这样才能被渲染生成视图。和其他框架不一样的是，Angularjs对模型本身没有任何限制和要求。你不需要继承任何类也不需要实现指定的方法以供调用或者改变模型。 模型可以是原生的对象哈希形式的，也可以是完整对象类型的。简而言之，模型可以是原生的Javascript对象。
+
+#### 模板
+
+所谓视图，就是指用户所看见的。 视图的生命周期由作为一个模板开始，它将和模型合并并最终渲染到浏览器的DOM中。与其他模板系统不同的是，AngularJS使用一种独特的形式来渲染视图。
+
+    * 其他模板 - 大部分模板系统工作原理，都是一开始获取一个带有特殊标记的HTML形式字符串。通常情况下模板的特殊标记替换了HTML的语法，以至于模板是不能用HTML编辑器编辑的。然后这个字符串会被送到模板引擎那里解析，并和数据合并。合并的结果是一个可以被浏览器解析的HTML字符串。这个字符串会被.innerHTML方法写到DOM中。使用innerHTML会造成浏览器的重新渲染。当模型改变时，这整个流程又要重复一遍。模板的生存周期就是DOM的更新周期。这里我想强调是，这些模板系统模板的基础是字符串。
+    * AngularJS - AngularJS和其它模板系统不同。它使用的是DOM而不是字符串。模板仍然是用HTML字符串写的，并且它仍然是HTML。浏览器将它解析成DOM， 然后这个DOM会作为输入传递给模板引擎，也就是我们的编译器。编译器查看其中的指令，找到的指令后，会开始监视指令内容中相应的模型。 这样做，就使得视图能“连续地”更新，不需要模板和数据的重新合并。你的模型也就成了你视图变化的唯一动因。
+
+```html
+<div ng-init="list = ['Chrome', 'Safari', 'Firefox', 'IE'] ">
+    <input ng-model="list" ng-list> <br>
+    <input ng-model="list" ng-list> <br>
+    <pre>list={{list}}</pre> <br>
+    <ol>
+        <li ng-repeat="item in list">
+            {{item}}
+        </li>
+    </ol>
+</div>
+```
+
+等同于下面代码
+
+```html
+<div ng-controller="MyCtrl">
+    <input ng-model="list" ng-list> <br>
+    <input ng-model="list" ng-list> <br>
+    <pre>list={{list}}</pre> <br>
+    <ol>
+        <li ng-repeat="item in list">
+            {{item}}
+        </li>
+    </ol>
+</div>
+```
+
+```javascript
+var myModule = angular.module('MyModule', []);
+
+myModule.controller('MyCtrl', ['$scope', function($scope) {
+    $scope.list = ['Chrome', 'Safari', 'Firefox', 'IE'];
+}]);
+```
+
+#### 指令
+
+一个指令 就是一种**由某个属性、元素名称、css类名出现而导致的行为，或者说是DOM的变化。**指令能让你以一种声明式的方法来扩展HTML表示能力。
+
+
+#### Filters过滤器
+
+过滤器扮演着数据翻译的角色。一般他们主要用在数据需要格式化成本地格式的时候。它参照了UNIX过滤的规则，并且也实现了“|”（管道）语法
+
+```html
+<div ng-init="list = ['Chrome', 'Safari', 'Firefox', 'IE'] ">
+    Number formatting: {{ 1234567890 | number }} <br>
+    array filtering <input ng-model="predicate">
+    {{ list | filter:predicate | json }}
+</div>
+```

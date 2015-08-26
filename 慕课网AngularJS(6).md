@@ -92,3 +92,79 @@ myModule.directive('light', function() {
 什么时候写在`controller`里，什么时候写在`link`里？如果想让你的一些方法暴露给外部调用，就写在`controller`里。`link`是处理指令内部的一些事务的。比如给元素绑定事件，绑定数据等。
 
 关于`require`，比如`strength`指令是依赖于`superman`这个指令的。如果设置`require`后，`link`函数就可以指定第4个参数`supermanCtrl`。AngularJS在进行处理的时候，会把`supermanCtrl`注入到link函数中，这样就可以通过`supermanCtrl`调用`myModule`里暴露在控制器的方法了。
+
+#### 独立scope
+
+通过指令创建了4个input输入框，在任意的input框中输入时其它3个输入框也会同步显示。
+
+```html
+<hello></hello>
+<hello></hello>
+<hello></hello>
+<hello></hello>
+```
+
+```javascript
+var module = angular.module('MyModule', []);
+
+module.directive('hello', function() {
+    return {
+        restrict: 'AE',
+        template: '<div><input type="text" ng-model="username"/>{{username}}</div>',
+        replace: true
+    };
+});
+```
+
+修改js，增加`scope: {}`，这样4个输入框的输入互不影响。这样每个指令都有自己独立的scope空间。
+
+```javascript
+var module = angular.module('MyModule', []);
+
+module.directive('hello', function() {
+    return {
+        restrict: 'AE',
+        scope: {},
+        template: '<div><input type="text" ng-model="username"/>{{username}}</div>',
+        replace: true
+    };
+});
+```
+
+scope的绑定策略：
+    
+    1. @，把当前属性作为字符串传递。你还可以绑定来自外层scope的值，在属性值中插入{{}}即可。
+    2. =，与父scope中的属性进行双向绑定。
+    3. &，传递一个来自父scope的函数，稍后调用。
+
+
+```html
+<div ng-controller="MyCtrl">
+    <drink flavor="{{ctrlFlavor}}"></drink>
+</div>
+```
+
+```javascript
+var module = angular.module('MyModule', []);
+
+module.controller('MyCtrl', ['$scope', function($scope) {
+    // 初始化数据模型ctrlFlavor
+    $scope.ctrlFlavor = 'BaiWei';
+}]);
+
+module.directive('drink', function() {
+    return {
+        restrict: 'AE',
+        template: '<div>{{flavor}}</div>',
+        link: function(scope, element, attrs) {
+            // 给作用域的flavor赋值，attrs.flavor是在控制器中绑定的字符串'BaiWei'
+            scope.flavor = attrs.flavor;
+        },
+        replace: true   //覆盖<drink>节点
+    };
+});
+```
+
+1. 控制器中给`<drink>`的属性`flavor`的数据模型`{{ctrlFlavor}}`初始化'BaiWei'
+2. 指令中给作用域（当前模板）的flavor赋值，参数attrs是`<drink>`属性集合，attrs.flavor是在控制器中绑定的字符串'BaiWei'
+3. 替换后实际上没有完全覆盖`<drink>`节点，是保留了所有的属性值，即flavor属性被保留了下来

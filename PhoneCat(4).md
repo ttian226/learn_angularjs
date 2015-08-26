@@ -174,6 +174,8 @@ phonecatServices.factory('Phone', ['$resource', function($resource) {
 ```
 这里第3个参数中的query对象覆盖了默认的query方法，等价下面
 
+*使用`Phone.query()`调用*
+
 ```javascript
 phonecatServices.factory('Phone', ['$resource', function($resource) {
     return $resource('phones/phones.json');
@@ -181,6 +183,8 @@ phonecatServices.factory('Phone', ['$resource', function($resource) {
 ```
 
 或者：
+
+*使用`Phone.get({phoneId: $routeParams.phoneId})`调用*
 
 ```javascript
 phonecatServices.factory('Phone', ['$resource', function($resource) {
