@@ -93,3 +93,81 @@ myApp.controller('SpicyController', ['$scope', function($scope) {
     3. 给$scope赋予属性值来创建或更新数据模型
     4. 控制器里的方法可以被通过直接赋予$scope属性来创建，如上面的chiliSpicy方法
     5. controller里的属性和方法在模板中是可以被直接访问的
+
+#### 带参数的例子
+
+controller中的方法也可以带参数，下面的例子上通过上面例子改进来的
+
+```html
+<div ng-controller="SpicyController">
+ <input ng-model="customSpice">
+ <button ng-click="spicy('chili')">Chili</button>
+ <button ng-click="spicy(customSpice)">Custom spice</button>
+ <p>The food is {{spice}} spicy!</p>
+</div>
+```
+
+```javascript
+var myApp = angular.module('spicyApp2', []);
+
+myApp.controller('SpicyController', ['$scope', function($scope) {
+    $scope.customSpice = "wasabi";
+    $scope.spice = 'very';
+
+    $scope.spicy = function(spice) {
+        $scope.spice = spice;
+    };
+}]);
+```
+
+SpicyController中只定义了一个方法`spicy`，它带了一个参数`spice`。模板中在第一个按钮上引用了这个方法并传递了一个常量参数'chili'，而第二个按钮通过传递一个模型变量customSpice作为参数
+
+
+#### 作用域继承的例子
+
+通常情况下都是给不同层次的Dom来绑定controller，因为ng-controller指令创建了一个新的子作用域。我们可以继承其它作用域的scope对象。在每个controller中的`$scope`对象都可以访问到在更高层级作用域上定义的属性和方法。
+
+```html
+<div class="spicy">
+  <div ng-controller="MainController">
+    <p>Good {{timeOfDay}}, {{name}}!</p>
+
+    <div ng-controller="ChildController">
+      <p>Good {{timeOfDay}}, {{name}}!</p>
+
+      <div ng-controller="GrandChildController">
+        <p>Good {{timeOfDay}}, {{name}}!</p>
+      </div>
+    </div>
+  </div>
+</div>
+```
+
+```css
+div.spicy div {
+  padding: 10px;
+  border: solid 2px blue;
+}
+```
+
+```javascript
+var myApp = angular.module('scopeInheritance', []);
+myApp.controller('MainController', ['$scope', function($scope) {
+  $scope.timeOfDay = 'morning';
+  $scope.name = 'Nikki';
+}]);
+myApp.controller('ChildController', ['$scope', function($scope) {
+  $scope.name = 'Mattie';
+}]);
+myApp.controller('GrandChildController', ['$scope', function($scope) {
+  $scope.timeOfDay = 'evening';
+  $scope.name = 'Gingerbread Baby';
+}]);
+```
+
+我们创建了3个ng-controller指令，结果是在view中创建了4个作用域，分别是：
+
+    1. 全局作用域root scope
+    2. MainController作用域，包含timeOfDay和name属性
+    3. ChildController作用域，它继承了timeOfDay属性，覆盖了上层作用域的name属性
+    4. GrandChildController作用域，它同时覆盖了MainController中的timeOfDay属性和ChildController的name属性
