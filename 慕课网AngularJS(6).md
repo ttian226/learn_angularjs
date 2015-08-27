@@ -137,7 +137,7 @@ scope的绑定策略：
     2. =，与父scope中的属性进行双向绑定。
     3. &，传递一个来自父scope的函数，稍后调用。
 
-例子：
+##### 使用`@`绑定的例子
 
 ```html
 <div ng-controller="MyCtrl">
@@ -190,7 +190,7 @@ module.directive('drink', function() {
 注：*@绑定传递的是一个字符串，而不是对象。即`flavor="{{ctrlFlavor}}"`，而不是`flavor="ctrlFlavor"`*
 
 
-使用`=`绑定的例子:
+##### 使用`=`绑定的例子
 
     1. 页面里有两个输入框，一个<input>，一个通过指令生成的<input>。
     2. <input>被绑定一个数据模型ctrlFlavor，在controller里被初始化。
@@ -232,3 +232,38 @@ myModule.directive("drink", function() {
 这样当修改外面数据模型`ctrlFlavor`时，指令中的数据模型`flavor`会跟随变化。当指令中的数据模型`flavor`发生变化时，外层数据模型`ctrlFlavor`会跟着变化。
 
 页面上表现是，当修改上面的输入框值，下面的输入框值会跟着变化。当修改下面的输入框值时，上面的输入框值会跟着变化。
+
+##### 使用`&`绑定的例子
+
+    1. 页面上包含了3个<greeting>，含有属性greet="sayHello(name)"
+    2. 在controller中定义了sayHello()方法
+    3. 指令中定义的模板包含了数据模型userName，还包括一个ng-click="greet({name:userName})"，它是通过scope中的greet:'&'来把<greeting>的属性greet中定义的方法sayHello传递给ngClick里的greet。（即greet引用了sayHello方法）
+    4. 参数为一个对象{name:userName}，name就是greet="sayHello(name)"中的name
+
+```html
+<div ng-controller="MyCtrl">
+    <greeting greet="sayHello(name)"></greeting>
+    <greeting greet="sayHello(name)"></greeting>
+    <greeting greet="sayHello(name)"></greeting>
+</div>
+```
+
+```javascript
+var myModule = angular.module("MyModule", []);
+myModule.controller('MyCtrl', ['$scope', function ($scope) {
+    $scope.sayHello = function (n) {
+        alert("Hello " + n);
+    }
+}]);
+
+myModule.directive("greeting", function () {
+    return {
+        restrict: 'AE',
+        scope:{
+            greet:'&'
+        },
+        template: '<input type="text" ng-model="userName" /><br/>' +
+        '<button class="btn btn-default" ng-click="greet({name:userName})">Greeting</button><br/>'
+    }
+});
+```
