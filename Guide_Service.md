@@ -74,12 +74,6 @@ myModule.factory('serviceId', function() {
 ```javascript
 var batchModule = angular.module('batchModule', []);
 
-/**
- * The `batchLog` service allows for messages to be queued in memory and flushed
- * to the console.log every 50 seconds.
- *
- * @param {*} message Message to be logged.
- */
 batchModule.factory('batchLog', ['$interval', '$log', function($interval, $log) {
   var messageQueue = [];
 
@@ -90,7 +84,6 @@ batchModule.factory('batchLog', ['$interval', '$log', function($interval, $log) 
     }
   }
 
-  // start periodic checking
   $interval(log, 50000);
 
   return function(message) {
@@ -98,10 +91,6 @@ batchModule.factory('batchLog', ['$interval', '$log', function($interval, $log) 
   }
 }]);
 
-/**
- * `routeTemplateMonitor` monitors each `$route` change and logs the current
- * template via the `batchLog` service.
- */
 batchModule.factory('routeTemplateMonitor', ['$route', 'batchLog', '$rootScope',
   function($route, batchLog, $rootScope) {
     $rootScope.$on('$routeChangeSuccess', function() {
@@ -110,3 +99,8 @@ batchModule.factory('routeTemplateMonitor', ['$route', 'batchLog', '$rootScope',
   }]);
 ```
 
+在这个例子中：
+
+    1. batchLog服务依赖了两个内置服务$interval和$log
+    2. routeTemplateMonitor服务依赖了一个内置服务$route和一个自定义服务batchLog
+    3. 这两个服务都使用数组表示法声明了他们的依赖。
