@@ -104,3 +104,46 @@ batchModule.factory('routeTemplateMonitor', ['$route', 'batchLog', '$rootScope',
     1. batchLog服务依赖了两个内置服务$interval和$log
     2. routeTemplateMonitor服务依赖了一个内置服务$route和一个自定义服务batchLog
     3. 这两个服务都使用数组表示法声明了他们的依赖。
+
+##### 通过$provide来注册服务
+
+也可以通过moudole的`config`方法使用`$provide`来注册一个服务。
+
+```javascript
+angular.module('myModule', []).config(['$provide', function($provide) {
+  $provide.factory('serviceId', function() {
+    var shinyNewServiceInstance;
+    // factory function body that constructs shinyNewServiceInstance
+    return shinyNewServiceInstance;
+  });
+}]);
+```
+
+上面的第一个例子可以这样写：
+
+```javascript
+var myApp = angular.module('myApp',[]);
+
+myApp.config(['$provide', function($provide) {
+    $provide.factory('notify', ['$window', function(win) {
+        var msgs = [];
+        // notify服务返回一个匿名函数的引用
+        return function(msg) {
+            msgs.push(msg);
+            if (msgs.length == 3) {
+                win.alert(msgs.join("\n"));
+                msgs = [];
+            }
+        };
+    }]);
+}]);
+
+myApp.controller('MyController', ['$scope', 'notify', function($scope, notify) {
+    $scope.message = 'test';
+    $scope.callNotify = function(msg) {
+        notify(msg);
+    };
+}]);
+```
+
+
