@@ -125,6 +125,8 @@ phoneModule.controller('PhoneDetailCtrl', ['$scope', '$routeParams', function($s
 }]);
 ```
 
+**这个例子自定义了一个模块phonecatController来专门负责来定义控制器，其实完全也可以不用这个模块，完全通过主模块来定义控制器**
+
 data.json
 
 ```json
