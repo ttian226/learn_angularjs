@@ -16,10 +16,10 @@
 
 ```html
 <body ng-app="docsSimpleDirective">
-    <div ng-controller="Controller">
-      <div my-customer></div>
-    </div>
-  </body>
+  <div ng-controller="Controller">
+    <div my-customer></div>
+  </div>
+</body>
 ```
 
 ```javascript
@@ -62,3 +62,198 @@ angular.module('docsTemplateUrlDirective', [])
 ```
 
 [完整代码](http://plnkr.co/edit/ETxYybPXEL3LhFbKplx9)
+
+例子三：templateUrl是一个函数，函数返回模板的url
+
+```html
+<div ng-controller="Controller">
+  <div my-customer type="name"></div>
+  <div my-customer type="address"></div>
+</div>
+```
+
+customer-name.html
+
+```html
+Name: {{customer.name}}
+```
+
+customer-address.html
+
+```html
+Address: {{customer.address}}
+```
+
+```javascript
+angular.module('docsTemplateUrlDirective', [])
+    .controller('Controller', ['$scope', function ($scope) {
+      $scope.customer = {
+        name: 'Naomi',
+        address: '1600 Amphitheatre'
+      };
+    }])
+    .directive('myCustomer', function () {
+      return {
+        templateUrl: function (elem, attr) {
+          return 'customer-' + attr.type + '.html';
+        }
+      };
+    });
+```
+
+[完整代码](http://plnkr.co/edit/ugLnEP0GQdJgYP7QxIcr)
+
+#### 使用restrict
+
+* 'A'匹配属性名
+* 'E'匹配节点名
+* 'C'匹配类名
+* 'M'匹配注释
+
+例子四：
+
+```html
+<div ng-controller="Controller">
+  <my-customer></my-customer>
+</div>
+```
+
+```javascript
+angular.module('docsRestrictDirective', [])
+    .controller('Controller', ['$scope', function ($scope) {
+      $scope.customer = {
+        name: 'Naomi',
+        address: '1600 Amphitheatre'
+      };
+    }])
+    .directive('myCustomer', function () {
+      return {
+        restrict: 'E',
+        templateUrl: 'my-customer.html'
+      };
+    });
+```
+
+[完整代码](http://plnkr.co/edit/pCKeeCBLBSC1py1Vtu8q)
+
+#### 独立作用域
+
+例子五：使用controller来隔离作用域
+
+```html
+<div ng-controller="NaomiController">
+  <my-customer></my-customer>
+</div>
+<hr>
+<div ng-controller="IgorController">
+  <my-customer></my-customer>
+</div>
+```
+
+```javascript
+angular.module('docsScopeProblemExample', [])
+    .controller('NaomiController', ['$scope', function($scope) {
+      $scope.customer = {
+        name: 'Naomi',
+        address: '1600 Amphitheatre'
+      };
+    }])
+    .controller('IgorController', ['$scope', function($scope) {
+      $scope.customer = {
+        name: 'Igor',
+        address: '123 Somewhere'
+      };
+    }])
+    .directive('myCustomer', function () {
+      return {
+        restrict: 'E',
+        templateUrl: 'my-customer.html'
+      };
+    });
+```
+
+[完整代码](http://plnkr.co/edit/4eNIwJ3gVqSSRLN15ENB)
+
+
+例子六：使用scope option来分离作用域
+
+```html
+<div ng-controller="Controller">
+  <my-customer info="naomi"></my-customer>
+  <hr>
+  <my-customer info="igor"></my-customer>
+</div>
+```
+
+my-customer-iso.html
+
+```html
+Name: {{customerInfo.name}} Address: {{customerInfo.address}}
+```
+
+```javascript
+angular.module('docsIsolateScopeDirective', [])
+    .controller('Controller', ['$scope', function($scope) {
+      $scope.naomi = {
+        name: 'Naomi',
+        address: '1600 Amphitheatre'
+      };
+      $scope.igor = {
+        name: 'Igor',
+        address: '123 Somewhere'
+      };
+    }])
+    .directive('myCustomer', function() {
+      return {
+        restrict: 'E',
+        scope: {
+          customerInfo: '=info'
+        },
+        templateUrl: 'my-customer-iso.html'
+      };
+    });
+```
+
+[完整代码](http://plnkr.co/edit/IAiH12XlWYofWFvGBJy7)
+
+例子七：
+
+```html
+<div ng-controller="Controller">
+  <my-customer info="naomi"></my-customer>
+</div>
+```
+
+my-customer-plus-vojta.html
+
+```html
+Name: {{customerInfo.name}} Address: {{customerInfo.address}}
+<hr>
+Name: {{vojta.name}} Address: {{vojta.address}}
+```
+
+
+```javascript
+angular.module('docsIsolationExample', [])
+    .controller('Controller', ['$scope', function($scope) {
+      $scope.naomi = {
+        name: 'Naomi',
+        address: '1600 Amphitheatre'
+      };
+      $scope.vojta = {
+        name: 'Vojta',
+        address: '3456 Somewhere Else'
+      };
+    }])
+    .directive('myCustomer', function() {
+      return {
+        restrict: 'E',
+        scope: {
+          customerInfo: '=info'
+        },
+        templateUrl: 'my-customer-plus-vojta.html'
+      };
+    });
+```
+
+[完整代码](http://plnkr.co/edit/RVpjpF8DckLPEWXtIse4)
