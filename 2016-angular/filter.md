@@ -60,7 +60,6 @@ angular.module('app', [])
     .controller('TestCtrl', function () {
       var self = this;
       self.myString = 'hello world';
-      
     })
     .filter('capitalize', function () {
       return function (text) {
@@ -70,4 +69,60 @@ angular.module('app', [])
 ```
 
 [完整代码](http://plnkr.co/edit/YSTV6CtSkn8xYEq8LwP2)
+
+#### orderBy
+
+`<p ng-repeat="person in test.people | orderBy:'name'">`
+
+#### limitTo
+
+`<p ng-repeat="person in test.people | limitTo:5">`
+
+#### 链式过滤器
+
+`<p ng-repeat="person in test.people | filter:search | orderBy:'name'  | limitTo: 5">`
+
+
+#### 注入<filterName>Filter到控制器
+
+```html
+<div ng-controller="FilterController as ctrl">
+  <div>
+    All entries:
+    <span ng-repeat="entry in ctrl.array">{{entry.name}} </span>
+  </div>
+  <div>
+    Entries that contain an "a":
+    <span ng-repeat="entry in ctrl.filteredArray">{{entry.name}} </span>
+  </div>
+</div>
+```
+
+```javascript
+angular.module('FilterInControllerModule', [])
+    .controller('FilterController', ['filterFilter', function (filterFilter) {
+      this.array = [
+        {name: 'Tobias'},
+        {name: 'Jeff'},
+        {name: 'Brian'},
+        {name: 'Igor'},
+        {name: 'James'},
+        {name: 'Brad'}
+      ];
+      
+      this.filteredArray = filterFilter(this.array, 'a');
+    }]);
+```
+
+[完整代码](http://plnkr.co/edit/EaLRlTuZguSzJBS22aCY)
+
+也可以通过模板进行过滤，如下：
+
+```html
+<span ng-repeat="entry in ctrl.array | filter: 'a'">{{entry.name}} </span>
+```
+
+[完整代码](http://plnkr.co/edit/uWeJV7HeDLfLxHuFDcxm)
+
+使用这种方式，由于是全文本查找，如果数组较大的话代价会很高。而把过滤器注入到controller中，会事先过滤匹配的项。
 
