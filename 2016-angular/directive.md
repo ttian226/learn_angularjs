@@ -258,3 +258,53 @@ angular.module('docsIsolationExample', [])
 
 
 [完整代码](http://plnkr.co/edit/RVpjpF8DckLPEWXtIse4)
+
+#### 创建一个指令来操作DOM
+
+```html
+<div ng-controller="Controller">
+  Date format: <input type="text" ng-model="format">
+  <hr>
+  Current time is: <span my-current-time="format"></span>
+</div>
+```
+
+```javascript
+angular.module('docsTimeDirective', [])
+    .controller('Controller', ['$scope', function ($scope) {
+      $scope.format = 'M/d/yy h:mm:ss a';
+    }])
+    .directive('myCurrentTime', ['$interval', 'dateFilter', function ($interval, dateFilter) {
+      function link(scope, element, attrs) {
+        var
+          format,
+          timeoutId;
+
+        function updateTime() {
+          element.text(dateFilter(new Date(), format));
+        }
+
+        // 监听format值的变化,当format有变化时去更新时间
+        scope.$watch(attrs.myCurrentTime, function (value) {
+          format = value;
+          updateTime();
+        });
+
+        // 当element元素销毁时,终止$interval防止产生内存泄露
+        element.on('$destroy', function () {
+          $interval.cancel(timeoutId);
+        });
+
+        // 每隔一秒更新一次时间
+        timeoutId = $interval(function () {
+          updateTime();
+        }, 1000);
+      }
+
+      return {
+        link: link
+      };
+    }]);
+```
+
+[完整代码](http://plnkr.co/edit/6OSFYYyspgY5JNAzaVJz)
